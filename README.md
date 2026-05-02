@@ -6,4 +6,4 @@ https://www.rocketleague.com/en/developer/stats-api
 
 
 You can now download the first release here on Github, unzip the folder and run the exe file in it. Dependencies are inside along with. Packaged with pyinstaller.
-(the file could be blocked by windows defender)
+(windows defender might warn because of unsigned exe)
