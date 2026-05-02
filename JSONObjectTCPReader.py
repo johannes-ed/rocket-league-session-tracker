@@ -12,7 +12,7 @@ class JSONObjectTCPReader(QObject):
     tcp_stream_connected = Signal(bool)
     message_received = Signal(dict)
 
-    def __init__(self, host: str='127.0.0.1', port: int=49123, retry_interval: int=10000, debug_mode: bool=False):
+    def __init__(self, host: str='127.0.0.1', port: int=49123, retry_interval: int=3000, debug_mode: bool=False):
         super().__init__()
         self.debug_mode = debug_mode
         
