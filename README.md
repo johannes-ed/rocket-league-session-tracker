@@ -1,6 +1,6 @@
 # RLSessionTracker - Play Session Tracker for Rocket League
 
-<img width="336" height="217" alt="image" src="https://github.com/user-attachments/assets/cc41fc4f-369d-47d2-9846-87d1d85838ad" />
+<img width="340" height="225" alt="image" src="https://github.com/user-attachments/assets/adec770c-2c79-4c98-b96c-9393758ae51c" />
 
 A simple app that displays current Rocket League play session stats: wins, losses, streak etc. The data is read from the new local game API.  
 Tries to recreate the functionality of the old RocketStats-plugin from when BakkesMod worked.
