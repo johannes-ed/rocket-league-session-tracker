@@ -1,5 +1,7 @@
 # RLSessionTracker - Play Session Tracker for Rocket League
 
+<img width="336" height="217" alt="image" src="https://github.com/user-attachments/assets/cc41fc4f-369d-47d2-9846-87d1d85838ad" />
+
 A simple app that displays current Rocket League play session stats: wins, losses, streak etc. The data is read from the new local game API. 
 
 ## How to use
@@ -13,7 +15,9 @@ To absolutely guarantee that all information is registered in the app in time, a
 - If the app manages to connect to the game, the small dot in the corner will be green instead of red. 
 
 ## Features/Quirks
+- Displays number of wins, losses and current streak for each played game mode during a session.
 
-## Planned additions
-
-- Button to manually toggle between which playlist stats are being shown instead of just the latest played game mode.
+- Allows leaving before the last overtime replay is over or as soon as a forfeit happens. In these cases, the win/loss is based on the current standings. So if you abandon/crash while in the lead, it will count as a win.
+- Auto-detects which game mode/playlist you are playing. But cannot differentiate between casual/ranked.
+- Stores each win/loss/streak for each playlist and allows toggling between them.
+- No data is stored, when closing the app everything is reset. But the game can be restarted and the stats kept. 
