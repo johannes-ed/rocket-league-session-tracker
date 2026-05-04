@@ -1,4 +1,7 @@
+import os, sys
+
 from PySide6.QtWidgets import QMainWindow, QPushButton
+from PySide6.QtGui import QIcon
 
 from TrackerWidget import TrackerWidget
 from StatusWidget import StatusWidget
@@ -15,6 +18,14 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("RLSessionTracker")
         self.setFixedSize(300, 150)
+
+        import os, sys
+
+        def resource_path(filename):
+            base = getattr(sys, "_MEIPASS", os.path.abspath("."))
+            return os.path.join(base, filename)
+
+        self.setWindowIcon(QIcon(resource_path("window_icon.png")))
 
         tcp = JSONObjectTCPReader(self)
         rl_tracker = RLSessionTracker(self)
