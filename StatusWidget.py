@@ -3,11 +3,13 @@ from PySide6.QtCore import Qt, QSize, QRect
 from PySide6.QtGui import QPainter, QColor
 
 class StatusWidget(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, green, red, parent=None):
         super().__init__(parent)
 
-        self._parent = parent
-        self._color = QColor(parent.red)
+        self.green = green
+        self.red = red
+
+        self._color = QColor(green)
         self._diameter = 12
         self._text = "Connection:"
 
@@ -45,4 +47,4 @@ class StatusWidget(QWidget):
 
     def update_connection_status(self, connected: bool):
         self.connected = connected
-        self.set_color(self._parent.green if connected else self._parent.red)
+        self.set_color(self.green if connected else self.red)

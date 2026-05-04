@@ -12,7 +12,7 @@ class RLSessionTracker(QObject):
     
     session_stats_updated = Signal(str, dict)
     
-    def __init__(self, parent=None, debug_mode: bool=False):
+    def __init__(self, parent, debug_mode: bool=False):
         super().__init__(parent)
         self.debug_mode = debug_mode
         

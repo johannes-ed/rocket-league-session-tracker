@@ -1,25 +1,27 @@
 import os, sys
 
-from PySide6.QtWidgets import QMainWindow, QPushButton
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QMainWindow, QWidget, QPushButton, QVBoxLayout, QHBoxLayout
 from PySide6.QtGui import QIcon
 
 from TrackerWidget import TrackerWidget
 from StatusWidget import StatusWidget
+from VersionWidget import VersionWidget
 
 from JSONObjectTCPReader import JSONObjectTCPReader
 from RLSessionTracker import RLSessionTracker
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, current_version, latest_version):
         super().__init__()
 
         self.green = "#30C230"
         self.red = '#E60000'
 
+
+
         self.setWindowTitle("RLSessionTracker")
         self.setFixedSize(300, 150)
-
-        import os, sys
 
         def resource_path(filename):
             base = getattr(sys, "_MEIPASS", os.path.abspath("."))
@@ -27,22 +29,22 @@ class MainWindow(QMainWindow):
 
         self.setWindowIcon(QIcon(resource_path("window_icon.png")))
 
-        tcp = JSONObjectTCPReader(self)
-        rl_tracker = RLSessionTracker(self)
-        
-        self.tracker_widget = TrackerWidget(self)
-        self.button_widget = QPushButton("Toggle Playlist", self)
-        self.status_widget = StatusWidget(self)
-        
-        tcp.message_received.connect(rl_tracker.handle_message)
-        rl_tracker.session_stats_updated.connect(self.tracker_widget.update_tracker_stats)
-        self.button_widget.clicked.connect(self.tracker_widget.button_toggle_playlist)
-        tcp.tcp_stream_connected.connect(self.status_widget.update_connection_status)
-        
-        tcp.start()
 
 
+        container = QWidget()
+        main_layout = QHBoxLayout(container)
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        left_layout = QVBoxLayout()
+        left_layout.setContentsMargins(0, 0, 0, 0)
+        right_layout = QVBoxLayout()
+        right_layout.setContentsMargins(0, 10, 10, 10)
 
+        self.tcp = JSONObjectTCPReader(self)
+        self.rl_tracker = RLSessionTracker(self)
+
+        self.version_widget = VersionWidget(current_version, latest_version, parent=container)
+        self.tracker_widget = TrackerWidget(self.green, self.red, parent=container)
+        self.button_widget = QPushButton("Toggle Playlist", parent=container)
         self.button_widget.setStyleSheet("""
             QPushButton {
                 background-color: #505050;
@@ -55,25 +57,27 @@ class MainWindow(QMainWindow):
                 padding-top: 8px;
             }
         """)
-
-        self.setCentralWidget(self.tracker_widget)
-        self._position_button()
-        self._position_dot()
-
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
+        self.status_widget = StatusWidget(self.green, self.red, parent=container)
         
-        self._position_button()
-        self._position_dot()
+        self.tcp.message_received.connect(self.rl_tracker.handle_message)
+        self.rl_tracker.session_stats_updated.connect(self.tracker_widget.update_tracker_stats)
+        self.button_widget.clicked.connect(self.tracker_widget.button_toggle_playlist)
+        self.tcp.tcp_stream_connected.connect(self.status_widget.update_connection_status)
+        
+        self.tcp.start()
 
-    def _position_dot(self):
-        margin = 8
-        x = self.width() - self.status_widget.width() - margin
-        y = margin
-        self.status_widget.move(x, y)
 
-    def _position_button(self):
-        margin = 8
-        x = self.width() - self.button_widget.width() - margin
-        y = self.height() - self.button_widget.height() - margin
-        self.button_widget.move(x, y)
+
+        left_layout.addWidget(self.tracker_widget)
+
+        right_layout.addWidget(self.status_widget, alignment=Qt.AlignRight)
+        right_layout.addStretch()
+        right_layout.addWidget(self.version_widget, alignment=Qt.AlignRight)
+        right_layout.addStretch()
+        right_layout.addWidget(self.button_widget, alignment=Qt.AlignRight)
+
+        main_layout.addLayout(left_layout)
+        main_layout.addStretch()
+        main_layout.addLayout(right_layout)
+
+        self.setCentralWidget(container)

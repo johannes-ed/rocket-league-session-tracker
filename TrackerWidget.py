@@ -5,27 +5,31 @@ from PySide6.QtWidgets import (
 class TrackerWidget(QWidget):
     """Qt window that displays the current RL session statistics in a (hopefully) nice way."""
 
-    def __init__(self, parent=None):
+    def __init__(self, green, red, parent=None):
         super().__init__(parent)
 
-        self._parent = parent
+        self.green = green
+        self.red = red
 
         self.label_playlist = QLabel("Playlist: -")
         self.label_playlist.setStyleSheet("font-size: 12pt;")
 
         self.label_wins = QLabel("   Wins: -")
-        self.label_wins.setStyleSheet(f"color: {parent.green}; font-size: 11pt;")
+        self.label_wins.setStyleSheet(f"color: {green}; font-size: 11pt;")
 
         self.label_losses = QLabel("   Losses: -")
-        self.label_losses.setStyleSheet(f"color: {parent.red}; font-size: 11pt;")
+        self.label_losses.setStyleSheet(f"color: {red}; font-size: 11pt;")
 
         self.label_streak = QLabel("   Streak: -")
-        self.label_streak.setStyleSheet(f"color: {parent.green}; font-size: 11pt;")
+        self.label_streak.setStyleSheet(f"color: {green}; font-size: 11pt;")
 
         layout = QVBoxLayout()
         layout.addWidget(self.label_playlist)
+        layout.addStretch()
         layout.addWidget(self.label_wins)
+        layout.addStretch()
         layout.addWidget(self.label_losses)
+        layout.addStretch()
         layout.addWidget(self.label_streak)
         self.setLayout(layout)
 
@@ -61,9 +65,9 @@ class TrackerWidget(QWidget):
         streak = stats.get('Streak')
         if streak >= 0: 
             text = f'+{streak}'
-            color = self._parent.green
+            color = self.green
         else: 
             text = f'{streak}'
-            color = self._parent.red
+            color = self.red
         self.label_streak.setStyleSheet(f"color: {color}; font-size: 11pt;")
         self.label_streak.setText(f"   Streak: {text}")
