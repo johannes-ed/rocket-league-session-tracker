@@ -22,7 +22,6 @@ class TrackerWidget(QWidget):
         self.label_streak = QLabel("   Streak: -")
         self.label_streak.setStyleSheet(f"color: {parent.green}; font-size: 11pt;")
 
-
         layout = QVBoxLayout()
         layout.addWidget(self.label_playlist)
         layout.addWidget(self.label_wins)
@@ -34,6 +33,15 @@ class TrackerWidget(QWidget):
         self.session_stats = None
 
 
+
+    def button_toggle_playlist(self):
+        if self.current_playlist != '-' and self.session_stats != None:
+            keys = list(self.session_stats.keys())
+
+            idx = keys.index(self.current_playlist)
+            next_key = keys[(idx + 1) % len(keys)]
+
+            self.update_tracker_stats(next_key, self.session_stats)
 
     def update_tracker_stats(self, playlist: str, data: dict):
         self.current_playlist = playlist
