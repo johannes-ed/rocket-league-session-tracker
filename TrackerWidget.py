@@ -5,46 +5,57 @@ from PySide6.QtWidgets import (
 class TrackerWidget(QWidget):
     """Qt window that displays the current RL session statistics in a (hopefully) nice way."""
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent=None):
+        super().__init__(parent)
 
-        self.setWindowTitle("Rocket League Session Tracker")
-        self.setMinimumWidth(350)
+        self._parent = parent
 
-        self.label_connected = QLabel("Connected to game API: -")
-        self.label_playlist = QLabel("Current playlist: -")
-        self.label_wins = QLabel("Wins: -")
-        self.label_losses = QLabel("Losses: -")
+        self.label_playlist = QLabel("Playlist: -")
+        self.label_playlist.setStyleSheet("font-size: 12pt;")
+
+        self.label_wins = QLabel("   Wins: -")
+        self.label_wins.setStyleSheet(f"color: {parent.green}; font-size: 11pt;")
+
+        self.label_losses = QLabel("   Losses: -")
+        self.label_losses.setStyleSheet(f"color: {parent.red}; font-size: 11pt;")
+
+        self.label_streak = QLabel("   Streak: -")
+        self.label_streak.setStyleSheet(f"color: {parent.green}; font-size: 11pt;")
+
 
         layout = QVBoxLayout()
-        layout.addWidget(self.label_connected)
         layout.addWidget(self.label_playlist)
         layout.addWidget(self.label_wins)
         layout.addWidget(self.label_losses)
+        layout.addWidget(self.label_streak)
         self.setLayout(layout)
 
-        self.connected = False
         self.current_playlist = '-'
         self.session_stats = None
 
-    def update_connection_status(self, connected: bool):
-        self.connected = connected
-        self.update_ui()
 
-    def update_current_playlist(self, playlist: str):
+
+    def update_tracker_stats(self, playlist: str, data: dict):
         self.current_playlist = playlist
-        self.update_ui()
-
-    def update_tracker_stats(self, data: dict):
         self.session_stats = data
-        self.update_ui()
+        self.update_ui(playlist, data)
 
-    def update_ui(self):
-        self.label_connected.setText(f"Connected to game API: {self.connected}")
-        self.label_playlist.setText(f"Current playlist: {self.current_playlist}")
+    def update_ui(self, playlist: str, session_stats: dict):
+        self.label_playlist.setText(f"Playlist: {playlist}")
         
-        if self.session_stats != None:
-            playlist_stats = self.session_stats.get(self.current_playlist)
-            
-            self.label_wins.setText(f"Wins: {playlist_stats.get('Wins')}")
-            self.label_losses.setText(f"Losses: {playlist_stats.get('Losses')}")
+        playlist_stats = session_stats.get(playlist)
+        
+        self.label_wins.setText(f"   Wins: {playlist_stats.get('Wins')}")
+        self.label_losses.setText(f"   Losses: {playlist_stats.get('Losses')}")
+        self._update_streak_label(playlist_stats)
+
+    def _update_streak_label(self, stats):
+        streak = stats.get('Streak')
+        if streak >= 0: 
+            text = f'+{streak}'
+            color = self._parent.green
+        else: 
+            text = f'{streak}'
+            color = self._parent.red
+        self.label_streak.setStyleSheet(f"color: {color}; font-size: 11pt;")
+        self.label_streak.setText(f"   Streak: {text}")

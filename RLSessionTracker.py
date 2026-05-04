@@ -1,5 +1,6 @@
 import sys
 import signal
+from collections import defaultdict
 
 from PySide6.QtCore import QObject, Signal
 from PySide6.QtWidgets import QApplication
@@ -9,8 +10,7 @@ from JSONObjectTCPReader import JSONObjectTCPReader
 class RLSessionTracker(QObject):
     """Session tracker for rocket league, takes data in the form of json objects from RL game API."""
     
-    current_playlist_updated = Signal(str)
-    session_stats_updated = Signal(dict)
+    session_stats_updated = Signal(str, dict)
     
     def __init__(self, debug_mode: bool=False):
         super().__init__()
@@ -20,7 +20,7 @@ class RLSessionTracker(QObject):
         self._just_launched = True # only true if the match values have never been reset, it is to allow saving match results from a match that had already began when program was launched.
 
         # this is the dictionary that will containand store all the current session data from each played playlist.
-        self.session_stats = {}
+        self.session_stats = defaultdict(lambda: {'Wins': 0, 'Losses': 0, 'Streak': 0}) # the default dict adds the default data each time new playlist is added
 
     def _reset_match_values(self):
         # all the variables that help in determining game mode, winner, etc.
@@ -32,7 +32,7 @@ class RLSessionTracker(QObject):
         self._current_standings = [0, 0]
         self._current_team = None
         self._players_in_team = [0, 0]
-        self._current_playlist = None
+        self.current_playlist = None
 
 
 
@@ -77,9 +77,9 @@ class RLSessionTracker(QObject):
 
         if self._initialized_match: 
             if self._in_replay != True:
-                self._current_team = self._get_target_team(update_state_data) # if we are NOT in a replay and in an active match, check what team the target (active player) is in. This throws error if in replay because no target player. 
-            self._current_playlist = self._get_current_playlist(update_state_data) # continuously update playlist while in game checking if more players join and adjusts accordingly. If players leave, the playlist stays at the highest number.
-            self._current_standings = self._get_current_standings(update_state_data) # current standings are needed if the match is destroyed to see if it should count as a win. 
+                self._get_target_team(update_state_data) # if we are NOT in a replay and in an active match, check what team the target (active player) is in. This throws error if in replay because no target player. 
+            self._get_current_playlist(update_state_data) # continuously update playlist while in game checking if more players join and adjusts accordingly. If players leave, the playlist stays at the highest number.
+            self._get_current_standings(update_state_data) # current standings are needed if the match is destroyed to see if it should count as a win. 
         elif self._just_launched and guid: # if the program was just launched, and we are in a game, allow saving the results without guid verification
             self._initialized_guid = guid
             self._initialized_match = True
@@ -89,15 +89,14 @@ class RLSessionTracker(QObject):
 
     def _handle_match_destroyed(self, match_destroyed_data: dict):
         if self._initialized_match and self._initialized_guid == match_destroyed_data.get('MatchGuid'): # checks that match is active/initialized and that the Guid:s match, that guid check might not be needed but in case there is some way for things to break it is a backup.
-            stats = self.session_stats.setdefault(self._current_playlist, {'Wins': 0, 'Losses': 0})
-            
-            if self._current_standings[self._current_team] > self._current_standings[1-self._current_team]: # if target player is in the lead, count as win if the match is destroyed. This does mean that if a player leaves before overtime win or forfeit (i.e. abandons, crashes etc.) the game will count as a win.
-                stats['Wins'] += 1
-            else: 
-                stats['Losses'] += 1
+            stats = self.session_stats[self.current_playlist]
 
-            self.current_playlist_updated.emit(self._current_playlist)
-            self.session_stats_updated.emit(self.session_stats) # emit updated session data to GUI
+            if self._current_standings[self._current_team] > self._current_standings[1-self._current_team]: # if target player is in the lead, count as win if the match is destroyed. This does mean that if a player leaves before overtime win or forfeit (i.e. abandons, crashes etc.) the game will count as a win.
+                self._stats_update_win(stats)
+            else: 
+                self._stats_update_loss(stats)
+
+            self.session_stats_updated.emit(self.current_playlist, self.session_stats) # emit updated session data to GUI
         
         # if above if statement is not true, something is broken and the match data won't count
         self._reset_match_values()
@@ -106,31 +105,48 @@ class RLSessionTracker(QObject):
 
     def _handle_match_ended(self, match_ended_data: dict):
         if self._initialized_match and self._initialized_guid == match_ended_data.get('MatchGuid'):
-            stats = self.session_stats.setdefault(self._current_playlist, {'Wins': 0, 'Losses': 0})
+            stats = self.session_stats[self.current_playlist]
             
             winner_team_num = match_ended_data.get('WinnerTeamNum')
             if self._current_team == winner_team_num:
-                stats['Wins'] += 1
+                self._stats_update_win(stats)
             else: 
-                stats['Losses'] += 1
+                self._stats_update_loss(stats)
 
-            self.current_playlist_updated.emit(self._current_playlist)
-            self.session_stats_updated.emit(self.session_stats) # emit updated session data to GUI
+            self.session_stats_updated.emit(self.current_playlist, self.session_stats) # emit updated session data to GUI
         
         # if above if statement is not true, something is broken and the match data won't count
         self._reset_match_values()
 
         if self.debug_mode: print(f"[TRACKER] Match ended. Stats:\n{self.session_stats}")
 
+    
 
+    def _stats_update_win(self, stats: dict):
+        stats['Wins'] += 1
+
+        if stats['Streak'] >= 0: 
+            stats['Streak'] += 1
+        else:
+            stats['Streak'] = 1
+        
+    def _stats_update_loss(self, stats: dict):
+        stats['Losses'] += 1
+
+        if stats['Streak'] >= 0: 
+            stats['Streak'] = -1
+        else:
+            stats['Streak'] -= 1
 
     def _get_target_team(self, update_state_data: dict) -> int:
         """Takes UpdateState message data and returns the team of the target player."""
         
         game = update_state_data.get("Game")
-        target = game.get('Target')
+        target = game.get('Target', {})
 
-        return target.get('TeamNum')
+        current_team = target.get('TeamNum')
+        if current_team is not None:
+            self._current_team = current_team
 
     def _get_current_standings(self, update_state_data: dict) -> bool:
         game = update_state_data.get('Game')
@@ -142,7 +158,7 @@ class RLSessionTracker(QObject):
             team_score = team.get('Score')
             standings[team_num] = team_score
 
-        return standings
+        self._current_standings = standings
 
     def _get_current_playlist(self, update_state_data: dict) -> str:
         """Decodes current playlist based on numbers of players on each team as well as the asset name of the current map."""
@@ -166,9 +182,10 @@ class RLSessionTracker(QObject):
         elif 'snow' in arena_label:
             game_mode = 'Snow Day'
         else:
-            game_mode = 'Soccar'
+            game_mode = 'Soccar' # real soccer is called soccer but rl uses a play on words socCar
 
-        return f'{self._players_in_team[self._current_team]}v{self._players_in_team[1-self._current_team]} {game_mode}'
+        if self._current_team is not None:
+            self.current_playlist = f'{self._players_in_team[self._current_team]}v{self._players_in_team[1-self._current_team]} {game_mode}'
 
 
 
