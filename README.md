@@ -17,7 +17,10 @@ To absolutely guarantee that all information is registered in the app in time, a
 ## Features/Quirks
 - Displays number of wins, losses and current streak for each played game mode during a session.
 
-- Allows leaving before the last overtime replay is over or as soon as a forfeit happens. In these cases, the win/loss is based on the current standings. So if you abandon/crash while in the lead, it will count as a win.
-- Auto-detects which game mode/playlist you are playing. But cannot differentiate between casual/ranked.
 - Stores each win/loss/streak for each playlist and allows toggling between them.
+
+- Auto-detects which game mode/playlist you are playing. But cannot differentiate between casual/ranked.
+
+- Allows leaving before the last overtime replay is over or as soon as a forfeit happens. In these cases, the win/loss is based on the current standings. So if you abandon/crash while in the lead, it will count as a win.
+
 - No data is stored, when closing the app everything is reset. But the game can be restarted and the stats kept. 
