@@ -9,7 +9,7 @@ class StatusWidget(QWidget):
         self.green = green
         self.red = red
 
-        self._color = QColor(green)
+        self._color = QColor(red)
         self._diameter = 12
         self._text = "Connection:"
 
