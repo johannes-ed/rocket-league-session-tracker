@@ -3,6 +3,7 @@
 <img width="336" height="217" alt="image" src="https://github.com/user-attachments/assets/cc41fc4f-369d-47d2-9846-87d1d85838ad" />
 
 A simple app that displays current Rocket League play session stats: wins, losses, streak etc. The data is read from the new local game API. 
+Tries to recreate the functionality of the old RocketStats-plugin that was used when BakkesMod worked.
 
 ## How to use
 
