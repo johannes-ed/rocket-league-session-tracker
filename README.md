@@ -20,13 +20,13 @@ To absolutely guarantee that all information is registered in the app in time, a
 
 - If the app manages to connect to the game, the small dot in the corner will be green instead of red.
 
-- The rest should be automatic, it will show the stats from the last played playlist unless you hit the toggle playlist button. You can only toggle between playlists that have been played this session.
+- The rest should be automatic, it will show the stats from the last played playlist unless you hit the next playlist button. You can only show stats from playlists that have been played this session.
 
 ## Features/Quirks
 
 - Displays number of wins, losses and current streak for each played game mode during a session.
 
-- Stores each win/loss/streak for each playlist and allows toggling between them.
+- Stores each win/loss/streak for each playlist and allows toggling between which is shown.
 
 - Auto-detects which game mode/playlist you are playing. But cannot differentiate between casual/ranked.
 
@@ -36,4 +36,4 @@ To absolutely guarantee that all information is registered in the app in time, a
 
 - No data is stored, when closing the app everything is reset. But the game can be restarted and the stats kept. 
 
-- It cannot overlay on top of a full screen game unfortunately.
+- It cannot overlay on top of a full screen game unfortunately. Rocket League needs to be in borderless or windowed mode.
