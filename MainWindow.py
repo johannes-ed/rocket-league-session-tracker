@@ -21,7 +21,8 @@ class MainWindow(QMainWindow):
 
 
         self.setWindowTitle("RLSessionTracker")
-        self.setFixedSize(300, 150)
+        self.setFixedSize(260, 130)
+        self.setWindowFlag(Qt.WindowStaysOnTopHint, True)
 
         def resource_path(filename):
             base = getattr(sys, "_MEIPASS", os.path.abspath("."))
@@ -33,26 +34,23 @@ class MainWindow(QMainWindow):
 
         container = QWidget()
         main_layout = QHBoxLayout(container)
-        main_layout.setContentsMargins(0, 0, 0, 0)
         left_layout = QVBoxLayout()
-        left_layout.setContentsMargins(0, 0, 0, 0)
         right_layout = QVBoxLayout()
-        right_layout.setContentsMargins(0, 10, 10, 10)
 
         self.tcp = JSONObjectTCPReader(self)
         self.rl_tracker = RLSessionTracker(self)
 
         self.version_widget = VersionWidget(current_version, latest_version, parent=container)
         self.tracker_widget = TrackerWidget(self.green, self.red, parent=container)
-        self.button_widget = QPushButton("Toggle Playlist", parent=container)
+        self.button_widget = QPushButton("Next Playlist", parent=container)
         self.button_widget.setStyleSheet("""
             QPushButton {
-                background-color: #505050;
+                background-color: #444444;
                 border-radius: 4px;
                 padding: 6px 10px;
             }
             QPushButton:pressed {
-                background-color: #686868;
+                background-color: #575757;
                 padding-left: 8px;
                 padding-top: 8px;
             }
@@ -68,16 +66,19 @@ class MainWindow(QMainWindow):
 
 
 
+        self.setCentralWidget(container)
+
+        main_layout.setContentsMargins(10, 10, 10, 10)
+        main_layout.setSpacing(0)
+        main_layout.addLayout(left_layout)
+        main_layout.addStretch()
+        main_layout.addLayout(right_layout)
+
         left_layout.addWidget(self.tracker_widget)
 
+        right_layout.setSpacing(1)
         right_layout.addWidget(self.status_widget, alignment=Qt.AlignRight)
         right_layout.addStretch()
         right_layout.addWidget(self.version_widget, alignment=Qt.AlignRight)
         right_layout.addStretch()
         right_layout.addWidget(self.button_widget, alignment=Qt.AlignRight)
-
-        main_layout.addLayout(left_layout)
-        main_layout.addStretch()
-        main_layout.addLayout(right_layout)
-
-        self.setCentralWidget(container)

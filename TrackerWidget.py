@@ -11,19 +11,26 @@ class TrackerWidget(QWidget):
         self.green = green
         self.red = red
 
-        self.label_playlist = QLabel("Playlist: -")
-        self.label_playlist.setStyleSheet("font-size: 12pt;")
+        self.indent = 15
 
-        self.label_wins = QLabel("   Wins: -")
+        self.label_playlist = QLabel("Stats will show after\nfirst match")
+        self.label_playlist.setStyleSheet("margin: 0px; padding: 0px; font-size: 12pt;")
+
+        self.label_wins = QLabel("Wins: -")
         self.label_wins.setStyleSheet(f"color: {green}; font-size: 11pt;")
+        self.label_wins.setIndent(self.indent)
 
-        self.label_losses = QLabel("   Losses: -")
+        self.label_losses = QLabel("Losses: -")
         self.label_losses.setStyleSheet(f"color: {red}; font-size: 11pt;")
+        self.label_losses.setIndent(self.indent)
 
-        self.label_streak = QLabel("   Streak: -")
+        self.label_streak = QLabel("Streak: -")
         self.label_streak.setStyleSheet(f"color: {green}; font-size: 11pt;")
+        self.label_streak.setIndent(self.indent)
 
         layout = QVBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(1)
         layout.addWidget(self.label_playlist)
         layout.addStretch()
         layout.addWidget(self.label_wins)
@@ -53,12 +60,12 @@ class TrackerWidget(QWidget):
         self.update_ui(playlist, data)
 
     def update_ui(self, playlist: str, session_stats: dict):
-        self.label_playlist.setText(f"Playlist: {playlist}")
+        self.label_playlist.setText(f"Stats: {playlist}")
         
         playlist_stats = session_stats.get(playlist)
         
-        self.label_wins.setText(f"   Wins: {playlist_stats.get('Wins')}")
-        self.label_losses.setText(f"   Losses: {playlist_stats.get('Losses')}")
+        self.label_wins.setText(f"Wins: {playlist_stats.get('Wins')}")
+        self.label_losses.setText(f"Losses: {playlist_stats.get('Losses')}")
         self._update_streak_label(playlist_stats)
 
     def _update_streak_label(self, stats):
@@ -70,4 +77,4 @@ class TrackerWidget(QWidget):
             text = f'{streak}'
             color = self.red
         self.label_streak.setStyleSheet(f"color: {color}; font-size: 11pt;")
-        self.label_streak.setText(f"   Streak: {text}")
+        self.label_streak.setText(f"Streak: {text}")

@@ -5,7 +5,7 @@ from PySide6.QtWidgets import QApplication
 
 from MainWindow import MainWindow
 
-app_version = 'v1.0.0'
+app_version = 'v1.1.0'
 
 def get_latest_version():
     try:
@@ -20,14 +20,14 @@ def get_latest_version():
 
 def main():
     app = QApplication(sys.argv)
-
-    # this is not a great method to force dark background and white text but it works
     app.setStyleSheet("""
         QWidget {
-            background-color: #252525;
-            color: white;
+            background-color: #1A1A1A;
+            color: #EEEEEE;
         }
     """)
+
+
     
     window = MainWindow(app_version, get_latest_version())
     window.show()

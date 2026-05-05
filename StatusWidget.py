@@ -13,7 +13,7 @@ class StatusWidget(QWidget):
         self._diameter = 12
         self._text = "Connection:"
 
-        self._padding = 6
+        self._padding = 4
         self._text_width = 65
 
         total_width = self._text_width + self._padding + self._diameter

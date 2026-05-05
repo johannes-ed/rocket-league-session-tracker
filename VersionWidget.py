@@ -17,6 +17,8 @@ class VersionWidget(QWidget):
         self.label_latest.setStyleSheet("color: #A0A0A0; font-size: 8pt;")
 
         layout = QVBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(1)
         layout.addWidget(self.label_link)
         layout.addWidget(self.label_current)
         layout.addWidget(self.label_latest)
