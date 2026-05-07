@@ -13,7 +13,7 @@ Tries to recreate the functionality of the old RocketStats-plugin from when Bakk
 ## How to use
 
 - Download the zip file from [releases](https://github.com/johannes-ed/rocket-league-session-tracker/releases), extract and launch the RLSessionTracker.exe. 
-The original exe file needs to stay in the same place as the internal-folder, but you can of course make a shortcut to the exe and place that somewhere else.
+The original exe file needs to stay in the same place as the internal-folder, but you can make a shortcut to the exe and place that somewhere else.
 
 - The app reads data from the built-in game API which is not activated by default. To enable it, follow the instructions in the official documentation: https://www.rocketleague.com/en/developer/stats-api  
 In summary, edit the "\<Install Dir>\TAGame\Config\DefaultStatsAPI.ini" file and set the PacketSendRate value to at least 1.  
