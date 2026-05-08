@@ -4,12 +4,12 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QMainWindow, QWidget, QPushButton, QVBoxLayout, QHBoxLayout
 from PySide6.QtGui import QIcon
 
-from TrackerWidget import TrackerWidget
-from StatusWidget import StatusWidget
-from VersionWidget import VersionWidget
+from src.TrackerWidget import TrackerWidget
+from src.StatusWidget import StatusWidget
+from src.VersionWidget import VersionWidget
 
-from JSONObjectTCPReader import JSONObjectTCPReader
-from RLSessionTracker import RLSessionTracker
+from src.JSONObjectTCPReader import JSONObjectTCPReader
+from src.RLSessionTracker import RLSessionTracker
 
 class MainWindow(QMainWindow):
     def __init__(self, current_version, latest_version):
@@ -25,7 +25,7 @@ class MainWindow(QMainWindow):
         self.setWindowFlag(Qt.WindowStaysOnTopHint, True)
 
         def resource_path(filename):
-            base = getattr(sys, "_MEIPASS", os.path.abspath("."))
+            base = getattr(sys, "_MEIPASS", os.path.abspath("./assets"))
             return os.path.join(base, filename)
 
         self.setWindowIcon(QIcon(resource_path("window_icon.png")))

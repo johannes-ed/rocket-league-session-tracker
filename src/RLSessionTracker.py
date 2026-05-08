@@ -5,7 +5,7 @@ from collections import defaultdict
 from PySide6.QtCore import QObject, Signal
 from PySide6.QtWidgets import QApplication
 
-from JSONObjectTCPReader import JSONObjectTCPReader
+from src.JSONObjectTCPReader import JSONObjectTCPReader
 
 class RLSessionTracker(QObject):
     """Session tracker for rocket league, takes data in the form of json objects from RL game API."""

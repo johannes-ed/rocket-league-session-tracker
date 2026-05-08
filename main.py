@@ -3,7 +3,7 @@ import requests
 
 from PySide6.QtWidgets import QApplication
 
-from MainWindow import MainWindow
+from src.MainWindow import MainWindow
 
 app_version = 'v1.1.0'
 
