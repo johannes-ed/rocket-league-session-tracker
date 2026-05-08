@@ -17,7 +17,7 @@ The original exe file needs to be in the same place as the _internal-folder, but
 
 - The app reads data from the built-in game API which is not activated by default. To enable it, follow the instructions in the official documentation: https://www.rocketleague.com/en/developer/stats-api  
 In summary, edit the "\<Install Dir>\TAGame\Config\DefaultStatsAPI.ini" file and set the PacketSendRate value to at least 1.  
-To absolutely guarantee that all information is registered in the app in time, a PacketSendRate of at least 10 is recommended, but 1 is fine. 
+If you leave very quickly as soon as an overtime goal has been scored, I would recommend a PacketSendRate of 10 to guarantee it doesn't miss registering the final goal. 
 
 - If the app manages to connect to the game, the small dot in the corner will be green instead of red.
 
